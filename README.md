@@ -57,14 +57,52 @@ If you see the above output you are ready for the lab.
 ```bash
 kubectl get pods --all-namespaces
 ```
+
+*📃output*
+
+```bash
+NAMESPACE     NAME                                              READY   STATUS    RESTARTS   AGE
+kube-system   coredns-f9fd979d6-fbhvf                           1/1     Running   0          97m
+kube-system   coredns-f9fd979d6-p95s2                           1/1     Running   0          97m
+kube-system   etcd-learning-cluster-master                      1/1     Running   0          97m
+kube-system   kube-apiserver-learning-cluster-master            1/1     Running   0          97m
+kube-system   kube-controller-manager-learning-cluster-master   1/1     Running   0          97m
+kube-system   kube-flannel-ds-kg2rb                             1/1     Running   0          96m
+kube-system   kube-flannel-ds-kjhh5                             1/1     Running   0          96m
+kube-system   kube-flannel-ds-ztdjh                             1/1     Running   0          96m
+kube-system   kube-proxy-nrqmf                                  1/1     Running   0          97m
+kube-system   kube-proxy-p45s8                                  1/1     Running   0          97m
+kube-system   kube-proxy-stqtm                                  1/1     Running   0          97m
+kube-system   kube-scheduler-learning-cluster-master            1/1     Running   0          97m
+```
+
 **✅ Step 2: Get the operator yaml file and deploy it.**
 ```bash
 wget https://openebs.github.io/charts/openebs-operator.yaml
-kubectl apply openebs-operator.yaml
+kubectl apply -f openebs-operator.yaml
 ```
+
 **✅ Step 3: Check to see the new OpenEBS pods.**
 ```bash
 kubectl get pods --all-namespaces
+```
+
+*📃output*
+
+```bash
+namespace/openebs created
+serviceaccount/openebs-maya-operator created
+...
+clusterrolebinding.rbac.authorization.k8s.io/openebs-maya-operator created
+deployment.apps/maya-apiserver created
+service/maya-apiserver-service created
+deployment.apps/openebs-provisioner created
+deployment.apps/openebs-snapshot-operator created
+configmap/openebs-ndm-config created
+daemonset.apps/openebs-ndm created
+deployment.apps/openebs-ndm-operator created
+deployment.apps/openebs-admission-server created
+deployment.apps/openebs-localpv-provisioner created
 ```
 
 ## 3. Create a Persistant Volume Claim
@@ -74,6 +112,21 @@ kubectl get pods --all-namespaces
 ssh worker0
 lsblk -f
 ```
+
+*📃output*
+
+```bash
+NAME        FSTYPE   LABEL           UUID                                 MOUNTPOINT
+loop0       squashfs                                                      /snap/core/9993
+loop1       squashfs                                                      /snap/amazon-ssm-agent
+loop2       squashfs                                                      /snap/core/10823
+loop3       squashfs                                                      /snap/core18/1988
+loop4       squashfs                                                      /snap/amazon-ssm-agent
+nvme1n1                                                                   
+nvme0n1                                                                   
+└─nvme0n1p1 ext4     cloudimg-rootfs 4dc427d0-74d1-4d90-a452-2cfdb7538e46 /
+```
+
 Notice the NVMe drives connected.  To exit the worker node simply run
 ```bash
 exit
@@ -85,9 +138,21 @@ wget https://openebs.github.io/charts/examples/local-device/local-device-pvc.yam
 kubectl apply -f local-device-pvc.yaml
 ```
 
+*📃output*
+
+```bash
+persistentvolumeclaim/local-device-pvc created
+```
 **✅ Step 3: Verify the PVC is in a pending state.**
 ```bash
 kubectl get pvc local-device-pvc
+```
+
+*📃output*
+
+```bash
+NAME               STATUS    VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+local-device-pvc   Pending                                      local-device   30s
 ```
 
 ## 4. Create a Pod and Attach the PVC
@@ -98,9 +163,19 @@ wget https://openebs.github.io/charts/examples/local-device/local-device-pod.yam
 kubectl apply -f local-device-pod.yaml
 ```
 
+*📃output*
+
+```bash
+pod/hello-local-device-pod created
+```
 **✅ Step 2: Verify our configuration starting with our new pod.**
 ```bash
 kubectl get pod hello-local-device-pod
+```
+
+*📃output*
+
+```bash
 ```
 
 **✅ Step 3: Verify the pod is using the Local PV Device we setup.**
@@ -115,10 +190,20 @@ kubectl describe pod hello-local-device-pod
 kubectl get pvc local-device-pvc
 ```
 
+*📃output*
+
+```bash
+```
+
 **✅ Step 2: Check your PVC configuration.**
 Use the id under the VOLUME column in the output of the previous step in place of YOURPVCID
 ```bash
 kubectl get pv YOURPVCID -o yaml
+```
+
+*📃output*
+
+```bash
 ```
 
 **✅ Step 3: Get the name of the block device.**
@@ -126,14 +211,21 @@ kubectl get pv YOURPVCID -o yaml
 kubectl get bdc -n openebs bdc-YOURPVCID
 ```
 
+*📃output*
+
+```bash
+```
 **✅ Step 4: Check the block device config.**
 ```bash
 kubectl get bd -n openebs YOURBLOCKDEVICENAME -o yaml
 ```
 
-## 6. Spin it All Down
+*📃output*
 
-#TODO access data
+```bash
+```
+
+## 6. Spin it All Down
 
 **✅ Step 1: Delete everything.**
 ```bash
@@ -145,6 +237,10 @@ kubectl delete sc local-device
 **✅ Step 2: Check the PV.**
 ```bash
 kubectl get pv
+```
+*📃output*
+
+```bash
 ```
 
 ## 7. Resources
