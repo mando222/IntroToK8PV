@@ -30,11 +30,13 @@ Everywhere in this repo you see `<YOURADDRESS>` replace with the URL for the ins
 ## 1. Getting Connected
 **✅ Step 1a: The first step in the section.**
 
+In your browser window navigate to the url <YOURADDRESS>:3000 where your address is the one emailed to you before the session.
+  
+When you arrive at the webpage you should be greeted by something similar to this.
+<img src="https://user-images.githubusercontent.com/1936716/107884421-a23fe180-6eba-11eb-96d2-4c703ccb1dcf.png" width=“700” />
 
-Screenshot of the above working
-<img src="https://user-images.githubusercontent.com/blah/blahblah.png" width=“700” />
-
-TODO
+Click in the `Terminal` menu from the top of the page and select new terminal as shown below
+<img src="https://user-images.githubusercontent.com/1936716/107884506-09f62c80-6ebb-11eb-9f7b-42bdb3444cc1.png" width=“700” />
 
 Once you have opened the terminal run
 ```bash
