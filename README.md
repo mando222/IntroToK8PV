@@ -17,12 +17,12 @@ Everywhere in this repo you see `<YOURADDRESS>` replace with the URL for the ins
 
 | Title  | Description
 |---|---|
-| **1 -  Getting Connected** | [Instructions](#Getting-Connected)  |
-| **2 - Setting up OpenEBS** | [Instructions](#Setting-up-OpenEBS)  |
-| **3 - Create a Persistant Volume Claim** | [Instructions](#Create-a-Persistant-Volume-Claim)  |
-| **4 - Create a Pod and Attach the PVC** | [Instructions](#Create-a-Pod-and-Attach-the-PVC)  |
-| **5 - Verify Everything** | [Instructions](#Verify-Everything)  |
-| **6 - Spin it All Down** | [Instructions](#Spin-it-All-Down)  |
+| **1 -  Getting Connected** | [Instructions](#1-Getting-Connected)  |
+| **2 - Setting up OpenEBS** | [Instructions](#2-Setting-up-OpenEBS)  |
+| **3 - Create a Persistant Volume Claim** | [Instructions](#3-Create-a-Persistant-Volume-Claim)  |
+| **4 - Create a Pod and Attach the PVC** | [Instructions](#4-Create-a-Pod-and-Attach-the-PVC)  |
+| **5 - Verify Everything** | [Instructions](#5-Verify-Everything)  |
+| **6 - Spin it All Down** | [Instructions](#6-Spin-it-All-Down)  |
 | **7 - Resources** | [Instructions](#7-Resources)  |
 
 
@@ -53,71 +53,99 @@ ubuntu@learning-cluster-master:~/workshop$
 If you see the above output you are ready for the lab.
 
 ## 2. Setting up OpenEBS
-
+**✅ Step 1: Check what Pods are running currently.**
+```bash
 kubectl get pods --all-namespaces
+```
+**✅ Step 2: Get the operator yaml file and deploy it.**
+```bash
 wget https://openebs.github.io/charts/openebs-operator.yaml
 kubectl apply openebs-operator.yaml
+```
+**✅ Step 3: Check to see the new OpenEBS pods.**
+```bash
 kubectl get pods --all-namespaces
-
-
+```
 
 ## 3. Create a Persistant Volume Claim
-#Look at the drives we have connected to our boxes
+
+**✅ Step 1: Look at the drives we have connected to our node.**
+```bash
+ssh worker0
 lsblk -f
+```
+Notice the NVMe drives connected.  To exit the worker node simply run
+```bash
+exit
+```
 
-
-#Setup the Persistant Volume Claim
+**✅ Step 2: Setup the Persistant Volume Claim.**
+```bash
 wget https://openebs.github.io/charts/examples/local-device/local-device-pvc.yaml
 kubectl apply -f local-device-pvc.yaml
-#Verify the PVC is in a pending state
+```
+
+**✅ Step 3: Verify the PVC is in a pending state.**
+```bash
 kubectl get pvc local-device-pvc
-
-
-
+```
 
 ## 4. Create a Pod and Attach the PVC
 
-
-
-#Next setup the pod
+**✅ Step 1: Setup the pod.**
+```bash
 wget https://openebs.github.io/charts/examples/local-device/local-device-pod.yaml
 kubectl apply -f local-device-pod.yaml
+```
 
-
-#Verify our configuration starting with our new pod
+**✅ Step 2: Verify our configuration starting with our new pod.**
+```bash
 kubectl get pod hello-local-device-pod
-#Verify the pod is using the Local PV Device we setup
-kubectl describe pod hello-local-device-pod
+```
 
+**✅ Step 3: Verify the pod is using the Local PV Device we setup.**
+```bash
+kubectl describe pod hello-local-device-pod
+```
 
 ## 5. Verify Everything
 
-# Look at the configuration of the Persistant Volume Claim
+**✅ Step 1: Look at the configuration of the Persistant Volume Claim.**
+```bash
 kubectl get pvc local-device-pvc
-# Use the name id under the VOLUME column to return the current configuration
+```
+
+**✅ Step 2: Check your PVC configuration.**
+Use the id under the VOLUME column in the output of the previous step in place of YOURPVCID
+```bash
 kubectl get pv YOURPVCID -o yaml
+```
 
-# Get the name of the block device
+**✅ Step 3: Get the name of the block device.**
+```bash
 kubectl get bdc -n openebs bdc-YOURPVCID
+```
 
-# Look at the block device 
+**✅ Step 4: Check the block device config.**
+```bash
 kubectl get bd -n openebs YOURBLOCKDEVICENAME -o yaml
-
-
-
+```
 
 ## 6. Spin it All Down
 
-
 #TODO access data
 
-#delete everything and see it spun down
+**✅ Step 1: Delete everything.**
+```bash
 kubectl delete pod hello-local-device-pod
 kubectl delete pvc local-device-pvc
 kubectl delete sc local-device
+```
+
+**✅ Step 2: Check the PV.**
+```bash
 kubectl get pv
-
-
+```
 
 ## 7. Resources
 For further reading go to the [OpenEBS Docs](https://docs.openebs.io/) 
