@@ -1,30 +1,29 @@
-# TITLE HERE
+# Introduction to Persistent Storage on Kubernetes
 
-##  DISCRIPTION HERE
-This is a discription of the cool stuff we are going to do in the session today
-
-Banner
-<img src="https://user-images.githubusercontent.com/blah/blahblah.png" width=“700” />
+##  DISCRIPTION
+There are a few ways to handle data persistance on Kubernetes.  Today we will dive in to configuration of the OSS OpenEBS project. 
 
 ## Before starting
 Workshop attendees will receave an email with the instance info prior to the workshop.
 
-Notice that training cloud instances will be available only during the workshop and will be terminated **24 hours later**. If you are in our workshop we recommend using the provided cloud instance, you can relax as we have you covered: prerequisites are installed already.
+Notice that training cloud instances will be available only during the workshop and will be terminated **12-24 hours later**. If you are in our workshop we recommend using the provided cloud instance, we have you covered: the prerequisites are installed.
 
 **⚡ IMPORTANT NOTE:**
 Everywhere in this repo you see `<YOURADDRESS>` replace with the URL for the instance you were given.  
 
 ## Table of content and resources
-
-* [Workshop On YouTube](YOUTUBE LINK HERE)
 * [Presentation](PDF OF SLIDES HERE)
-* [Discord chat](DISCORD LINK HERE)
+* [Discord chat](https://discord.gg/kkDTVQwJSN)
 
 | Title  | Description
 |---|---|
-| **1 - Part 1** | [Instructions](#Part-1)  |
-| **2 - Part 2** | [Instructions](#Part-2)  |
-| **3 - Resources** | [Instructions](#Resources)  |
+| **1 -  Getting Connected** | [Instructions](#Getting-Connected)  |
+| **2 - Setting up OpenEBS** | [Instructions](#Setting-up-OpenEBS)  |
+| **3 - Create a Persistant Volume Claim** | [Instructions](#Create-a-Persistant-Volume-Claim)  |
+| **4 - Create a Pod and Attach the PVC** | [Instructions](#Create-a-Pod-and-Attach-the-PVC)  |
+| **5 - Verify Everything** | [Instructions](#Verify-Everything)  |
+| **6 - Spin it All Down** | [Instructions](#Spin-it-All-Down)  |
+| **7 - Resources** | [Instructions](#Resources)  |
 
 
 
