@@ -23,7 +23,7 @@ Everywhere in this repo you see `<YOURADDRESS>` replace with the URL for the ins
 | **4 - Create a Pod and Attach the PVC** | [Instructions](#Create-a-Pod-and-Attach-the-PVC)  |
 | **5 - Verify Everything** | [Instructions](#Verify-Everything)  |
 | **6 - Spin it All Down** | [Instructions](#Spin-it-All-Down)  |
-| **7 - Resources** | [Instructions](#Resources)  |
+| **7 - Resources** | [Instructions](#7-Resources)  |
 
 
 
