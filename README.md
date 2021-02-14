@@ -1,6 +1,6 @@
 # Introduction to Persistent Storage on Kubernetes
 
-##  DISCRIPTION
+## DISCRIPTION
 There are a few ways to handle data persistance on Kubernetes.  Today we will dive in to configuration of the OSS OpenEBS project. 
 
 ## Before starting
