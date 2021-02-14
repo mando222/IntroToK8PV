@@ -196,6 +196,7 @@ kubectl get pvc local-device-pvc
 ```
 
 **✅ Step 2: Check your PVC configuration.**
+
 Use the id under the VOLUME column in the output of the previous step in place of YOURPVCID
 ```bash
 kubectl get pv YOURPVCID -o yaml
