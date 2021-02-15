@@ -1,15 +1,15 @@
 # Introduction to Persistent Storage on Kubernetes
 
-## DISCRIPTION
-There are a few ways to handle data persistance on Kubernetes.  Today we will dive in to configuration of the OSS OpenEBS project. 
+## DESCRIPTION
+There are a few ways to handle data persistence on Kubernetes.  Today we will dive into configuration of the OSS OpenEBS project. 
 
 ## Before starting
-Workshop attendees will receave an email with the instance info prior to the workshop.
+Workshop attendees will receive an email with the instance info prior to the workshop.
 
-Notice that training cloud instances will be available only during the workshop and will be terminated **12-24 hours later**. If you are in our workshop we recommend using the provided cloud instance, we have you covered: the prerequisites are installed.
+Notice that training cloud instances will be available only during the workshop and will be terminated **12-24 hours later**. If you are in our workshop, we recommend using the provided cloud instance; we have you covered: the prerequisites are installed.
 
 **⚡ IMPORTANT NOTE:**
-Everywhere in this repo you see `<YOURADDRESS>` replace with the URL for the instance you were given.  
+Everywhere in this repository you see `<YOURADDRESS>` replace with the URL for the instance you were given.  
 
 ## Table of content and resources
 * [Presentation](PDF OF SLIDES HERE)
@@ -17,20 +17,21 @@ Everywhere in this repo you see `<YOURADDRESS>` replace with the URL for the ins
 
 | Title  | Description
 |---|---|
-| **1 -  Getting Connected** | [Instructions](#1-Getting-Connected)  |
+| **1 - Getting Connected** | [Instructions](#1-Getting-Connected)  |
 | **2 - Setting up OpenEBS** | [Instructions](#2-Setting-up-OpenEBS)  |
-| **3 - Create a Persistant Volume Claim** | [Instructions](#3-Create-a-Persistant-Volume-Claim)  |
-| **4 - Create a Pod and Attach the PVC** | [Instructions](#4-Create-a-Pod-and-Attach-the-PVC)  |
-| **5 - Verify Everything** | [Instructions](#5-Verify-Everything)  |
-| **6 - Spin it All Down** | [Instructions](#6-Spin-it-All-Down)  |
-| **7 - Resources** | [Instructions](#7-Resources)  |
+| **3 - Create a Storage Class** | [Instructions](#3-Create-a-Storage-Class)  |
+| **4 - Create a Persistent Volume Claim** | [Instructions](#4-Create-a-Persistent-Volume-Claim)  |
+| **5 - Create a Pod and Attach the PVC** | [Instructions](#5-Create-a-Pod-and-Attach-the-PVC)  |
+| **6 - Verify Everything** | [Instructions](#6-Verify-Everything)  |
+| **7 - Spin it All Down** | [Instructions](#7-Spin-it-All-Down)  |
+| **8 - Resources** | [Instructions](#8-Resources)  |
 
 
 
 ## 1. Getting Connected
 **✅ Step 1a: The first step in the section.**
 
-In your browser window navigate to the url <YOURADDRESS>:3000 where your address is the one emailed to you before the session.
+In your browser window, navigate to the url <YOURADDRESS>:3000 where your address is the one emailed to you before the session.
   
 When you arrive at the webpage you should be greeted by something similar to this.
 <img src="https://user-images.githubusercontent.com/1936716/107884421-a23fe180-6eba-11eb-96d2-4c703ccb1dcf.png" width=“700” />
@@ -107,7 +108,31 @@ deployment.apps/openebs-admission-server created
 deployment.apps/openebs-localpv-provisioner created
 ```
 
-## 3. Create a Persistant Volume Claim
+## 3. Create a Storage Class
+
+**✅ Step 1: Setup the Storage Class.**
+```bash
+wget https://openebs.github.io/charts/examples/local-device/local-device-ps.yaml
+kubectl apply -f local-device-sc.yaml
+```
+
+*📃output*
+
+```bash
+storageclass.storage.k8s.io/local-device created
+```
+**✅ Step 2: Verify the Storage Class created.**
+```bash
+kubectl get sc local-device
+```
+
+*📃output*
+
+```bash
+local-device   openebs.io/local   Delete          WaitForFirstConsumer   false                  57s
+```
+
+## 4. Create a Persistent Volume Claim
 
 **✅ Step 1: Look at the drives we have connected to our node.**
 ```bash
@@ -157,7 +182,7 @@ NAME               STATUS    VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS   A
 local-device-pvc   Pending                                      local-device   30s
 ```
 
-## 4. Create a Pod and Attach the PVC
+## 5. Create a Pod and Attach the PVC
 
 **✅ Step 1: Setup the pod.**
 ```bash
@@ -185,7 +210,7 @@ kubectl get pod hello-local-device-pod
 kubectl describe pod hello-local-device-pod
 ```
 
-## 5. Verify Everything
+## 6. Verify Everything
 
 **✅ Step 1: Look at the configuration of the Persistant Volume Claim.**
 ```bash
@@ -228,7 +253,7 @@ kubectl get bd -n openebs YOURBLOCKDEVICENAME -o yaml
 ```bash
 ```
 
-## 6. Spin it All Down
+## 7. Spin it All Down
 
 **✅ Step 1: Delete everything.**
 ```bash
@@ -246,7 +271,7 @@ kubectl get pv
 ```bash
 ```
 
-## 7. Resources
+## 8. Resources
 For further reading go to the [OpenEBS Docs](https://docs.openebs.io/) 
 Check out our new Discord server [Invite](https://discord.gg/kkDTVQwJSN) 
 Get into more with the Data On Kubernetes Community [DOKc](https://dok.community/)
