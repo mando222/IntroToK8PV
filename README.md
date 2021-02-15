@@ -129,7 +129,8 @@ kubectl get sc local-device
 *📃output*
 
 ```bash
-local-device   openebs.io/local   Delete          WaitForFirstConsumer   false                  57s
+NAME           PROVISIONER        RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+local-device   openebs.io/local   Delete          WaitForFirstConsumer   false                  4m28s
 ```
 
 ## 4. Create a Persistent Volume Claim
