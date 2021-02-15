@@ -183,7 +183,6 @@ kubectl label bd -n openebs BLOCKDEVICENAMEHERE openebs.io/block-device-tag=lear
 
 **✅ Step 2: Setup the Storage Class.**
 ```bash
-wget https://openebs.github.io/charts/examples/local-device/local-device-sc.yaml 
 kubectl apply -f local-device-sc.yaml
 ```
 
@@ -253,11 +252,35 @@ kubectl get pod hello-local-device-pod
 *📃output*
 
 ```bash
+NAME                     READY   STATUS    RESTARTS   AGE
+hello-local-device-pod   1/1     Running   0          2m55s
 ```
 
 **✅ Step 3: Verify the pod is using the Local PV Device we setup.**
 ```bash
 kubectl describe pod hello-local-device-pod
+```
+
+*📃output*
+
+```bash
+Name:         hello-local-device-pod
+Namespace:    default
+Priority:     0
+Node:         learning-cluster-0-worker-0/10.0.1.66
+Start Time:   Mon, 15 Feb 2021 05:43:23 +0000
+Labels:       <none>
+Annotations:  <none>
+Status:       Running
+...
+Events:
+  Type    Reason     Age    From               Message
+  ----    ------     ----   ----               -------
+  Normal  Scheduled  3m34s  default-scheduler  Successfully assigned default/hello-local-device-pod to learning-cluster-0-worker-0
+  Normal  Pulling    3m34s  kubelet            Pulling image "busybox"
+  Normal  Pulled     3m33s  kubelet            Successfully pulled image "busybox" in 608.838949ms
+  Normal  Created    3m33s  kubelet            Created container hello-container
+  Normal  Started    3m33s  kubelet            Started container hello-container
 ```
 
 ## 6. Verify Everything
@@ -270,6 +293,8 @@ kubectl get pvc local-device-pvc
 *📃output*
 
 ```bash
+NAME               STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+local-device-pvc   Bound    pvc-1d1e53c2-897e-48dc-aeb3-485bc2a593a6   5G         RWO            local-device   4m41s
 ```
 
 **✅ Step 2: Check your PVC configuration.**
@@ -282,6 +307,18 @@ kubectl get pv YOURPVCID -o yaml
 *📃output*
 
 ```bash
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  annotations:
+    local.openebs.io/blockdeviceclaim: bdc-pvc-1d1e53c2-897e-48dc-aeb3-485bc2a593a6
+    pv.kubernetes.io/provisioned-by: openebs.io/local
+  creationTimestamp: "2021-02-15T05:43:22Z"
+  finalizers:
+  - kubernetes.io/pv-protection
+...
+status:
+  phase: Bound
 ```
 
 **✅ Step 3: Get the name of the block device.**
@@ -292,6 +329,8 @@ kubectl get bdc -n openebs bdc-YOURPVCID
 *📃output*
 
 ```bash
+NAME                                           BLOCKDEVICENAME                                PHASE   AGE
+bdc-pvc-1d1e53c2-897e-48dc-aeb3-485bc2a593a6   blockdevice-00a153d28d33527f7614abfeb2700329   Bound   10m
 ```
 **✅ Step 4: Check the block device config.**
 ```bash
@@ -301,6 +340,39 @@ kubectl get bd -n openebs YOURBLOCKDEVICENAME -o yaml
 *📃output*
 
 ```bash
+apiVersion: openebs.io/v1alpha1
+kind: BlockDevice
+metadata:
+  annotations:
+    internal.openebs.io/uuid-scheme: gpt
+  creationTimestamp: "2021-02-15T04:30:10Z"
+  finalizers:
+  - openebs.io/bd-protection
+  generation: 2
+  labels:
+    kubernetes.io/hostname: learning-cluster-0-worker-0
+    ndm.io/blockdevice-type: blockdevice
+    ndm.io/managed: "true"
+    openebs.io/block-device-tag: learning
+  managedFields:
+  - apiVersion: openebs.io/v1alpha1
+...
+  devlinks:
+  - kind: by-id
+    links:
+    - /dev/disk/by-id/nvme-Amazon_EC2_NVMe_Instance_Storage_AWS283E87F715A24F5CC
+    - /dev/disk/by-id/nvme-nvme.1d0f-4157533238334538374637313541323446354343-416d617a6f6e20454332204e564d6520496e7374616e63652053746f72616765-00000001
+  - kind: by-path
+    links:
+    - /dev/disk/by-path/pci-0000:00:1f.0-nvme-1
+  filesystem: {}
+  nodeAttributes:
+    nodeName: learning-cluster-0-worker-0
+  partitioned: "No"
+  path: /dev/nvme1n1
+status:
+  claimState: Claimed
+  state: Active
 ```
 
 ## 7. Spin it All Down
@@ -319,6 +391,7 @@ kubectl get pv
 *📃output*
 
 ```bash
+No resources found
 ```
 
 ## 8. Resources
