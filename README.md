@@ -85,11 +85,6 @@ wget https://openebs.github.io/charts/openebs-operator.yaml
 kubectl apply -f openebs-operator.yaml
 ```
 
-**✅ Step 3: Check to see the new OpenEBS pods.**
-```bash
-kubectl get pods --all-namespaces
-```
-
 *📃output*
 
 ```bash
@@ -108,34 +103,40 @@ deployment.apps/openebs-admission-server created
 deployment.apps/openebs-localpv-provisioner created
 ```
 
+**✅ Step 3: Check to see the new OpenEBS pods.**
+```bash
+kubectl get pods --all-namespaces
+```
+
+*📃output*
+
+```bash
+NAMESPACE     NAME                                                READY   STATUS    RESTARTS   AGE
+kube-system   coredns-f9fd979d6-ln2v7                             1/1     Running   0          9m49s
+kube-system   coredns-f9fd979d6-qmddk                             1/1     Running   0          9m49s
+kube-system   etcd-learning-cluster-0-master                      1/1     Running   0          10m
+kube-system   kube-apiserver-learning-cluster-0-master            1/1     Running   0          10m
+kube-system   kube-controller-manager-learning-cluster-0-master   1/1     Running   0          10m
+kube-system   kube-flannel-ds-bf4fw                               1/1     Running   0          2m40s
+kube-system   kube-flannel-ds-lzwfg                               1/1     Running   0          2m40s
+kube-system   kube-flannel-ds-sklwv                               1/1     Running   0          2m40s
+kube-system   kube-proxy-4n8z5                                    1/1     Running   0          3m
+kube-system   kube-proxy-f8kf2                                    1/1     Running   0          2m47s
+kube-system   kube-proxy-ld922                                    1/1     Running   0          9m49s
+kube-system   kube-scheduler-learning-cluster-0-master            1/1     Running   0          10m
+openebs       maya-apiserver-64b7cfd966-ts7wg                     0/1     Running   3          74s
+openebs       openebs-admission-server-dfcc899d4-kq6lq            1/1     Running   0          73s
+openebs       openebs-localpv-provisioner-7f5c4cd4cf-kkvgl        1/1     Running   0          73s
+openebs       openebs-ndm-9cdcx                                   1/1     Running   0          73s
+openebs       openebs-ndm-flt9m                                   1/1     Running   0          73s
+openebs       openebs-ndm-operator-85bb97d5f7-x5bkq               1/1     Running   0          73s
+openebs       openebs-provisioner-fc4f45bbb-rvv69                 1/1     Running   0          74s
+openebs       openebs-snapshot-operator-856d75cbb9-vj2r6          2/2     Running   0          74s
+```
+
 ## 3. Create a Storage Class
 
-**✅ Step 1: Setup the Storage Class.**
-```bash
-wget https://openebs.github.io/charts/examples/local-device/local-device-ps.yaml
-kubectl apply -f local-device-sc.yaml
-```
-
-*📃output*
-
-```bash
-storageclass.storage.k8s.io/local-device created
-```
-**✅ Step 2: Verify the Storage Class created.**
-```bash
-kubectl get sc local-device
-```
-
-*📃output*
-
-```bash
-NAME           PROVISIONER        RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
-local-device   openebs.io/local   Delete          WaitForFirstConsumer   false                  4m28s
-```
-
-## 4. Create a Persistent Volume Claim
-
-**✅ Step 1: Look at the drives we have connected to our node.**
+**✅ Step 1: Look at the drives we have connected to our nodes.**
 ```bash
 ssh worker0
 lsblk -f
@@ -160,7 +161,55 @@ Notice the NVMe drives connected.  To exit the worker node simply run
 exit
 ```
 
-**✅ Step 2: Setup the Persistant Volume Claim.**
+**✅ Step 1: Tag Block Devices.**
+
+First we need to see what block devices we have access to.  
+
+```bash 
+kubectl get blockdevice -n openebs
+```
+*📃output*
+
+```bash
+NAME                                           NODENAME                      SIZE          CLAIMSTATE   STATUS   AGE
+blockdevice-00a153d28d33527f7614abfeb2700329   learning-cluster-0-worker-0   75000000000   Unclaimed    Active   66m
+blockdevice-0b4e70565b4d5193724c1c97e59d9ed2   learning-cluster-0-worker-1   75000000000   Unclaimed    Active   66m
+```
+
+```bash
+kubectl label bd -n openebs BLOCKDEVICENAMEHERE openebs.io/block-device-tag=learning
+kubectl label bd -n openebs BLOCKDEVICENAMEHERE openebs.io/block-device-tag=learning
+```
+
+**✅ Step 2: Setup the Storage Class.**
+```bash
+wget https://openebs.github.io/charts/examples/local-device/local-device-sc.yaml 
+kubectl apply -f local-device-sc.yaml
+```
+
+*📃output*
+
+```bash
+storageclass.storage.k8s.io/local-device created
+```
+**✅ Step 3: Verify the Storage Class created.**
+
+
+```bash
+kubectl get sc local-device
+```
+
+*📃output*
+
+```bash
+NAME           PROVISIONER        RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+local-device   openebs.io/local   Delete          WaitForFirstConsumer   false                  4m28s
+```
+
+## 4. Create a Persistent Volume Claim
+
+
+**✅ Step 1: Setup the Persistant Volume Claim.**
 ```bash
 wget https://openebs.github.io/charts/examples/local-device/local-device-pvc.yaml
 kubectl apply -f local-device-pvc.yaml
@@ -171,7 +220,7 @@ kubectl apply -f local-device-pvc.yaml
 ```bash
 persistentvolumeclaim/local-device-pvc created
 ```
-**✅ Step 3: Verify the PVC is in a pending state.**
+**✅ Step 2: Verify the PVC is in a pending state.**
 ```bash
 kubectl get pvc local-device-pvc
 ```
