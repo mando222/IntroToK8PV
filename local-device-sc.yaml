@@ -10,7 +10,7 @@ metadata:
       - name: FSType
         value: xfs
       - name: BlockDeviceTag
-        value: "mongo"
+        value: "learning"
 provisioner: openebs.io/local
 reclaimPolicy: Delete
 volumeBindingMode: WaitForFirstConsumer
